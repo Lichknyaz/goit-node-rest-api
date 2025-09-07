@@ -7,10 +7,8 @@ import authRouter from "./routes/authRouter.js";
 
 import "./db/sequelize.js"
 import errorHandler from "./middlewares/errorHandler.js";
-// import sequelize from "./db/sequelize.js";
+
 const app = express();
-//
-// sequelize.sync({force:true})
 
 app.use(morgan("tiny"));
 app.use(cors());
