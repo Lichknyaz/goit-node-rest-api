@@ -3,7 +3,8 @@ import {
     listContacts,
     removeContact,
     addContact,
-    updateContactById
+    updateContactById,
+    updateStatusById
 } from "../services/contactsServices.js";
 
 export const getAllContacts = async (req, res) => {
@@ -22,10 +23,11 @@ export const getOneContact = async (req, res) => {
 
 export const deleteContact = async (req, res) => {
     const {id} = req.params;
-    const contact = await removeContact(id);
+    const contact = await getContactById(id);
     if (contact === null) {
         return res.status(404).json({"message": "Not found"})
     }
+    await removeContact(id);
     return res.json(contact);
 };
 
@@ -37,10 +39,18 @@ export const createContact = async (req, res) => {
 
 export const updateContact = async (req, res) => {
     const {id} = req.params;
-    const contact = await getContactById(id)
-    if (contact === null) {
+    const updatedContact = await updateContactById(id,req.body);
+    if (updatedContact === null) {
         return res.status(404).json({"message": "Not found"})
     }
-    const updatedContact = await updateContactById(id,req.body);
+    return res.status(201).json(updatedContact);
+};
+
+export const updateStatusContact = async (req, res) => {
+    const {id} = req.params;
+    const updatedContact = await updateStatusById(id,req.body);
+    if (updatedContact === null) {
+        return res.status(404).json({"message": "Not found"})
+    }
     return res.status(201).json(updatedContact);
 };
