@@ -1,12 +1,15 @@
 import User from "../db/user.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt"
+import gravatar from "gravatar";
 
 const {JWT_SECRET} = process.env;
 
 export const registerUser = async payload => {
     const hashPassword = await bcrypt.hash(payload.password, 10)
-    return User.create({...payload, password: hashPassword});
+    const { email, ...rest } = payload;
+    const avatarURL = gravatar.url(email, { s: '250', d: 'retro', r: 'g' }, true);
+    return User.create({ ...rest, email, password: hashPassword, avatarURL });
 };
 
 export const loginUser = async payload => {

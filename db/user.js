@@ -24,6 +24,7 @@ const User = sequelize.define(
             type: DataTypes.STRING,
             defaultValue: null,
         },
+        avatarURL: DataTypes.STRING,
     })
 
 
