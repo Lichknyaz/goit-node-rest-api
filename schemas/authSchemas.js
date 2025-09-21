@@ -10,3 +10,7 @@ export const loginSchema = Joi.object({
     email: Joi.string().trim().email().required(),
     password: Joi.string().trim().min(6).required(),
 })
+
+export const resendVerifySchema = Joi.object({
+    email: Joi.string().trim().email().required(),
+});

@@ -1,13 +1,14 @@
-import {loginUser, logoutUser, registerUser} from "../services/authServices.js";
+import {loginUser, logoutUser, registerUser, verifyUserByToken, resendVerificationEmailService} from "../services/authServices.js";
 
 export const registerController = async (req, res, next) => {
   try {
-    const { email, subscription } = await registerUser(req.body);
+    const { email, subscription, avatarURL } = await registerUser(req.body);
 
     res.status(201).json({
       user: {
         email,
         subscription,
+        avatarURL,
       },
     });
   } catch (err) {
@@ -15,6 +16,31 @@ export const registerController = async (req, res, next) => {
   }
 };
 
+export const verifyEmailController = async (req, res, next) => {
+  try {
+    const { verificationToken } = req.params;
+    const ok = await verifyUserByToken(verificationToken);
+    if (!ok) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    return res.status(200).json({ message: 'Verification successful' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const resendVerifyController = async (req, res, next) => {
+  try {
+    const { email } = req.body || {};
+    if (!email) {
+      return res.status(400).json({ message: 'missing required field email' });
+    }
+    const result = await resendVerificationEmailService(email);
+    return res.status(result.status).json({ message: result.message });
+  } catch (err) {
+    next(err);
+  }
+};
 
 export const loginController = async (req, res, next) => {
     try {
@@ -37,11 +63,12 @@ export const loginController = async (req, res, next) => {
 }
 
 export const getCurrentController = async (req, res, next) => {
-    const {email, subscription} = req.user;
+    const {email, subscription, avatarURL} = req.user;
 
     res.json({
         email,
-        subscription
+        subscription,
+        avatarURL,
     })
 
 }
